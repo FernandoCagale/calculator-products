@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    volumes:
+    - mongo:/data/db
+    ports:
+    - 27017:27017
+    networks:
+    - infra
+    restart: unless-stopped
+
+  calculator-grpc:
+    image: fernandocagale/calculator:grpc
+    container_name: calculator-grpc
+    environment:
+      GRPC: :5000
+      MONGO_ADDRS: mongo:27017
+    ports:
+    - 5000:5000
+    networks:
+    - infra
+    depends_on:
+    - mongo
+    restart: unless-stopped
+
+  calculator-client:
+    image: fernandocagale/calculator-client
+    container_name: calculator-client
+    environment:
+      PORT: 3000
+      GRPC: calculator-grpc:5000
+      MONGO_ADDRS: mongodb://mongo:27017/calculator
+    ports:
+    - 3000:3000
+    networks:
+    - infra
+    depends_on:
+    - calculator-grpc
+    restart: unless-stopped
+
+networks:
+  infra:
+    driver: bridge
+
+volumes:
+  mongo:
