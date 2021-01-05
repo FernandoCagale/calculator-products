@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package grpc;
+
+service Calculator {
+  rpc Calculator (Request) returns (Reply) {}
+}
+
+message Request {
+  string user_id = 1;
+  string product_id = 2;
+}
+
+message Reply {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  int32 price_in_cents = 4;
+  Discount discount = 5;
+}
+
+message Discount {
+  int32 percentage = 1;
+  int32 value_in_cents = 2;
+}
+
